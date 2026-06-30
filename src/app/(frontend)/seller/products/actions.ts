@@ -14,7 +14,7 @@ export type SellerActionState = {
 } | null
 
 const requireActiveSeller = async () => {
-  const { user } = await getMeUser({ nullUserRedirect: '/admin/login' })
+  const { user } = await getMeUser({ nullUserRedirect: '/login' })
 
   if (user.accountStatus !== 'active') {
     throw new Error('Your account is suspended. Product changes are disabled.')

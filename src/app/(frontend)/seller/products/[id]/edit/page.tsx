@@ -21,7 +21,7 @@ export default async function EditSellerProductPage({ params }: EditSellerProduc
   const productID = Number(id)
   if (!Number.isInteger(productID)) notFound()
 
-  const { user } = await getMeUser({ nullUserRedirect: '/admin/login' })
+  const { user } = await getMeUser({ nullUserRedirect: '/login' })
   const payload = await getPayload({ config: configPromise })
 
   const { docs: products } = await payload.find({

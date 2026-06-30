@@ -8,7 +8,7 @@ import { ProductForm } from '../_components/ProductForm'
 import { SellerShell } from '../_components/SellerShell'
 
 export default async function NewSellerProductPage() {
-  const { user } = await getMeUser({ nullUserRedirect: '/admin/login' })
+  const { user } = await getMeUser({ nullUserRedirect: '/login' })
   const payload = await getPayload({ config: configPromise })
   const { docs: categories } = await payload.find({
     collection: 'categories',

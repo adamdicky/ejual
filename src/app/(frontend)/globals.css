@@ -229,6 +229,16 @@ body.seller-workspace-active footer {
   display: none;
 }
 
+body.auth-workspace-active .admin-bar,
+body.auth-workspace-active header,
+body.auth-workspace-active footer {
+  display: none;
+}
+
 body.seller-workspace-active {
+  background: var(--mantine-color-body);
+}
+
+body.auth-workspace-active {
   background: var(--mantine-color-body);
 }
