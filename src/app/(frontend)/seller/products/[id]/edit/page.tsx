@@ -16,6 +16,10 @@ type EditSellerProductPageProps = {
   }>
 }
 
+export const metadata = {
+  title: 'Edit Product | eJual',
+}
+
 export default async function EditSellerProductPage({ params }: EditSellerProductPageProps) {
   const { id } = await params
   const productID = Number(id)

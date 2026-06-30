@@ -9,6 +9,10 @@ import { ProductListClient } from './_components/ProductListClient'
 import { SellerShell } from './_components/SellerShell'
 import { getProductStock, type SellerProductRow } from './_lib'
 
+export const metadata = {
+  title: 'Seller Products | eJual',
+}
+
 export default async function SellerProductsPage() {
   const { user } = await getMeUser({ nullUserRedirect: '/login' })
   const payload = await getPayload({ config: configPromise })
