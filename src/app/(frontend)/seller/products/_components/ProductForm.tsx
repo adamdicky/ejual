@@ -2,9 +2,11 @@
 
 import {
   Alert,
+  Box,
   Button,
   Card,
   Divider,
+  FileInput,
   Group,
   NumberInput,
   Select,
@@ -14,9 +16,9 @@ import {
   TextInput,
   Textarea,
 } from '@mantine/core'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, Plus, Trash2 } from 'lucide-react'
 import Link from 'next/link'
-import { useActionState } from 'react'
+import { useActionState, useState } from 'react'
 
 import type { Category, Product } from '@/payload-types'
 import { productStatusOptions } from '../_lib'
@@ -31,6 +33,7 @@ type ProductFormProps = {
 export function ProductForm({ categories, product }: ProductFormProps) {
   const action = product ? updateProduct.bind(null, product.id) : createProduct
   const [state, formAction] = useActionState(action, null)
+  const [variantCount, setVariantCount] = useState(1)
   const categoryOptions = categories.map((category) => ({
     label: category.categoryName || category.title,
     value: String(category.id),
@@ -101,24 +104,91 @@ export function ProductForm({ categories, product }: ProductFormProps) {
             <>
               <Divider />
               <Stack gap="sm">
-                <Text fw={700}>First variant</Text>
-                <Group grow>
-                  <TextInput label="Color" name="color" placeholder="Black" required />
-                  <TextInput label="Size" name="size" placeholder="M" required />
+                <Group justify="space-between">
+                  <Text fw={700}>Variants</Text>
+                  <Button
+                    leftSection={<Plus size={16} />}
+                    onClick={() => setVariantCount((count) => count + 1)}
+                    type="button"
+                    variant="light"
+                  >
+                    Add another variant
+                  </Button>
                 </Group>
-                <Group grow>
-                  <NumberInput
-                    decimalScale={2}
-                    defaultValue={0}
-                    fixedDecimalScale
-                    label="Additional price"
-                    min={0}
-                    name="additionalPrice"
-                    prefix="RM "
-                    required
-                  />
-                  <NumberInput defaultValue={0} label="Stock quantity" min={0} name="stockQuantity" required />
-                </Group>
+                {Array.from({ length: variantCount }, (_, index) => (
+                  <Box
+                    bg="var(--mantine-color-gray-light)"
+                    key={index}
+                    p="md"
+                    style={{
+                      border: '1px solid var(--mantine-color-default-border)',
+                      borderRadius: 'var(--mantine-radius-md)',
+                    }}
+                  >
+                    <Stack gap="sm">
+                      <Group justify="space-between">
+                        <Text fw={600}>{index === 0 ? 'First variant' : `Variant ${index + 1}`}</Text>
+                        {index > 0 ? (
+                          <Button
+                            color="red"
+                            leftSection={<Trash2 size={16} />}
+                            onClick={() => setVariantCount((count) => Math.max(1, count - 1))}
+                            size="xs"
+                            type="button"
+                            variant="subtle"
+                          >
+                            Remove
+                          </Button>
+                        ) : null}
+                      </Group>
+                      <Group grow>
+                        <TextInput label="Color" name="color" placeholder="Black" required />
+                        <TextInput label="Size" name="size" placeholder="M" required />
+                      </Group>
+                      <Group grow>
+                        <NumberInput
+                          decimalScale={2}
+                          defaultValue={0}
+                          fixedDecimalScale
+                          label="Additional price"
+                          min={0}
+                          name="additionalPrice"
+                          prefix="RM "
+                          required
+                        />
+                        <NumberInput
+                          defaultValue={0}
+                          label="Stock quantity"
+                          min={0}
+                          name="stockQuantity"
+                          required
+                        />
+                      </Group>
+                    </Stack>
+                  </Box>
+                ))}
+              </Stack>
+            </>
+          ) : null}
+          {!product ? (
+            <>
+              <Divider />
+              <Stack gap="sm">
+                <Text fw={700}>Product images</Text>
+                <FileInput
+                  accept="image/*"
+                  clearable
+                  description="Images are attached to the product listing, not to individual variants."
+                  label="Upload product images"
+                  multiple
+                  name="productImages"
+                  placeholder="Choose image files"
+                />
+                <TextInput
+                  label="Image alt text"
+                  name="productImageAlt"
+                  placeholder="Black cotton oversized tee"
+                />
               </Stack>
             </>
           ) : null}

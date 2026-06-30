@@ -3,11 +3,14 @@
 import {
   Alert,
   Badge,
+  Box,
   Button,
   Card,
+  FileInput,
   Group,
   NumberInput,
   Select,
+  SimpleGrid,
   Stack,
   Table,
   Tabs,
@@ -15,14 +18,14 @@ import {
   TextInput,
 } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
-import { AlertCircle, Check, Image, Layers, Ruler } from 'lucide-react'
+import { AlertCircle, Check, GripVertical, Image, Layers, Ruler } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
-import { useActionState, useEffect } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 
 import type { Category, Inventory, ProductImage, ProductVariant } from '@/payload-types'
 import { ProductForm } from './ProductForm'
 import { SubmitButton } from './SubmitButton'
-import { addVariant, attachProductImage, updateInventory } from '../actions'
+import { addVariant, attachProductImage, reorderProductImages, updateInventory } from '../actions'
 import { getRelationshipID } from '../_lib'
 
 type ProductEditWorkspaceProps = {
@@ -86,18 +89,137 @@ function AttachImageForm({ productID }: { productID: number }) {
             </Alert>
           ) : null}
           <Group grow>
-            <NumberInput
-              description="Use an existing Payload media document ID."
-              label="Media ID"
-              min={1}
-              name="mediaID"
+            <FileInput
+              accept="image/*"
+              clearable
+              description="Images are attached to the product listing, not to individual variants."
+              label="Upload product images"
+              multiple
+              name="productImages"
+              placeholder="Choose image files"
               required
             />
-            <NumberInput defaultValue={0} label="Display order" min={0} name="displayOrder" required />
+            <TextInput label="Image alt text" name="productImageAlt" placeholder="Front view" />
           </Group>
           <Group justify="flex-end">
-            <SubmitButton idleLabel="Attach image" pendingLabel="Attaching image..." />
+            <SubmitButton idleLabel="Upload images" pendingLabel="Uploading images..." />
           </Group>
+        </Stack>
+      </Card>
+    </form>
+  )
+}
+
+function ProductImageOrderForm({
+  images,
+  productID,
+}: {
+  images: ProductImage[]
+  productID: number
+}) {
+  const [state, formAction] = useActionState(reorderProductImages.bind(null, productID), null)
+  const [orderedImages, setOrderedImages] = useState(images)
+  const [draggedID, setDraggedID] = useState<number | null>(null)
+
+  useEffect(() => {
+    setOrderedImages(images)
+  }, [images])
+
+  const moveImage = (targetID: number) => {
+    if (!draggedID || draggedID === targetID) return
+
+    setOrderedImages((currentImages) => {
+      const fromIndex = currentImages.findIndex((image) => image.id === draggedID)
+      const toIndex = currentImages.findIndex((image) => image.id === targetID)
+      if (fromIndex === -1 || toIndex === -1) return currentImages
+
+      const nextImages = [...currentImages]
+      const [movedImage] = nextImages.splice(fromIndex, 1)
+      nextImages.splice(toIndex, 0, movedImage)
+      return nextImages
+    })
+  }
+
+  if (orderedImages.length === 0) {
+    return (
+      <Card>
+        <Text c="dimmed" ta="center">
+          No product images attached yet.
+        </Text>
+      </Card>
+    )
+  }
+
+  return (
+    <form action={formAction}>
+      <Card>
+        <Stack gap="md">
+          <Group justify="space-between">
+            <Stack gap={2}>
+              <Text fw={700}>Product image order</Text>
+              <Text c="dimmed" size="sm">
+                Drag images into the order customers should see them.
+              </Text>
+            </Stack>
+            <SubmitButton idleLabel="Save order" pendingLabel="Saving order..." />
+          </Group>
+          {state && typeof state === 'object' && 'error' in state ? (
+            <Alert color="red" icon={<AlertCircle size={18} />}>
+              {String(state.error)}
+            </Alert>
+          ) : null}
+          <input name="imageOrder" type="hidden" value={orderedImages.map((image) => image.id).join(',')} />
+          <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }}>
+            {orderedImages.map((productImage, index) => {
+              const media = typeof productImage.image === 'number' ? null : productImage.image
+              const imageURL = media?.url || media?.thumbnailURL
+
+              return (
+                <Box
+                  draggable
+                  key={productImage.id}
+                  onDragEnd={() => setDraggedID(null)}
+                  onDragOver={(event) => {
+                    event.preventDefault()
+                    moveImage(productImage.id)
+                  }}
+                  onDragStart={() => setDraggedID(productImage.id)}
+                  p="md"
+                  style={{
+                    border: '1px solid var(--mantine-color-default-border)',
+                    borderRadius: 'var(--mantine-radius-md)',
+                    cursor: 'grab',
+                  }}
+                >
+                  <Stack gap="sm">
+                    <Group justify="space-between">
+                      <Group gap="xs">
+                        <GripVertical size={18} />
+                        <Text fw={600}>Image {index + 1}</Text>
+                      </Group>
+                      <Badge variant="light">Order {index + 1}</Badge>
+                    </Group>
+                    {imageURL ? (
+                      <img
+                        alt={media?.alt || `Product image ${index + 1}`}
+                        src={imageURL}
+                        style={{
+                          aspectRatio: '4 / 3',
+                          borderRadius: 'var(--mantine-radius-md)',
+                          objectFit: 'cover',
+                          width: '100%',
+                        }}
+                      />
+                    ) : (
+                      <Text c="dimmed" size="sm">
+                        Media #{getRelationshipID(productImage.image)}
+                      </Text>
+                    )}
+                  </Stack>
+                </Box>
+              )
+            })}
+          </SimpleGrid>
         </Stack>
       </Card>
     </form>
@@ -254,33 +376,7 @@ export function ProductEditWorkspace({
       <Tabs.Panel pt="lg" value="images">
         <Stack gap="lg">
           <AttachImageForm productID={product.id} />
-          <Card p={0}>
-            <Table verticalSpacing="md">
-              <Table.Thead>
-                <Table.Tr>
-                  <Table.Th>Media</Table.Th>
-                  <Table.Th>Display order</Table.Th>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                {images.map((image) => (
-                  <Table.Tr key={image.id}>
-                    <Table.Td>Media #{getRelationshipID(image.image)}</Table.Td>
-                    <Table.Td>{image.displayOrder}</Table.Td>
-                  </Table.Tr>
-                ))}
-                {images.length === 0 ? (
-                  <Table.Tr>
-                    <Table.Td colSpan={2}>
-                      <Text c="dimmed" ta="center">
-                        No product images attached yet.
-                      </Text>
-                    </Table.Td>
-                  </Table.Tr>
-                ) : null}
-              </Table.Tbody>
-            </Table>
-          </Card>
+          <ProductImageOrderForm images={images} productID={product.id} />
         </Stack>
       </Tabs.Panel>
 
