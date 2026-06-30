@@ -1,0 +1,205 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1350" viewBox="0 0 1800 1350">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155" />
+    </marker>
+    <style>
+      .bg { fill: #f8fafc; }
+      .title { font: 700 36px Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 18px Arial, sans-serif; fill: #475569; }
+      .class { fill: #ffffff; stroke: #334155; stroke-width: 2; rx: 8; }
+      .head { fill: #e2e8f0; stroke: #334155; stroke-width: 2; }
+      .name { font: 700 18px Arial, sans-serif; fill: #0f172a; }
+      .attr { font: 14px Arial, sans-serif; fill: #334155; }
+      .rel { stroke: #334155; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+      .relLabel { font: 13px Arial, sans-serif; fill: #0f172a; paint-order: stroke; stroke: #f8fafc; stroke-width: 5; }
+      .noteBox { fill: #fff7ed; stroke: #c2410c; stroke-width: 1.5; rx: 8; }
+      .noteTitle { font: 700 16px Arial, sans-serif; fill: #9a3412; }
+      .note { font: 13px Arial, sans-serif; fill: #7c2d12; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1800" height="1350" />
+  <text class="title" x="60" y="58">eJual Domain Model</text>
+  <text class="subtitle" x="60" y="88">Payload CMS commerce collections: classes, attributes, multiplicities, and relationship justifications</text>
+
+  <!-- User -->
+  <rect class="class" x="60" y="130" width="300" height="220" />
+  <rect class="head" x="60" y="130" width="300" height="42" />
+  <text class="name" x="80" y="157">User</text>
+  <text class="attr" x="80" y="195">fullName: text</text>
+  <text class="attr" x="80" y="217">email: email, unique</text>
+  <text class="attr" x="80" y="239">password: Payload auth</text>
+  <text class="attr" x="80" y="261">phoneNumber: text</text>
+  <text class="attr" x="80" y="283">profileImage: Media</text>
+  <text class="attr" x="80" y="305">role: admin | customer</text>
+  <text class="attr" x="80" y="327">accountStatus: active | suspended</text>
+
+  <!-- Address -->
+  <rect class="class" x="60" y="450" width="300" height="250" />
+  <rect class="head" x="60" y="450" width="300" height="42" />
+  <text class="name" x="80" y="477">Address</text>
+  <text class="attr" x="80" y="515">receiverName: text</text>
+  <text class="attr" x="80" y="537">phoneNumber: text</text>
+  <text class="attr" x="80" y="559">addressLine1: text</text>
+  <text class="attr" x="80" y="581">addressLine2: text?</text>
+  <text class="attr" x="80" y="603">city, state, postcode: text</text>
+  <text class="attr" x="80" y="625">country: text</text>
+  <text class="attr" x="80" y="647">isDefault: boolean</text>
+
+  <!-- Cart -->
+  <rect class="class" x="60" y="780" width="260" height="105" />
+  <rect class="head" x="60" y="780" width="260" height="42" />
+  <text class="name" x="80" y="807">Cart</text>
+  <text class="attr" x="80" y="845">user: User, unique</text>
+
+  <!-- Notification -->
+  <rect class="class" x="60" y="990" width="300" height="160" />
+  <rect class="head" x="60" y="990" width="300" height="42" />
+  <text class="name" x="80" y="1017">Notification</text>
+  <text class="attr" x="80" y="1055">title: text</text>
+  <text class="attr" x="80" y="1077">message: textarea</text>
+  <text class="attr" x="80" y="1099">type: order | promotion | system</text>
+  <text class="attr" x="80" y="1121">isRead: boolean</text>
+
+  <!-- Category -->
+  <rect class="class" x="560" y="130" width="310" height="160" />
+  <rect class="head" x="560" y="130" width="310" height="42" />
+  <text class="name" x="580" y="157">Category</text>
+  <text class="attr" x="580" y="195">categoryName: text</text>
+  <text class="attr" x="580" y="217">title: text</text>
+  <text class="attr" x="580" y="239">description: textarea?</text>
+  <text class="attr" x="580" y="261">slug: generated text</text>
+
+  <!-- Product -->
+  <rect class="class" x="560" y="390" width="310" height="190" />
+  <rect class="head" x="560" y="390" width="310" height="42" />
+  <text class="name" x="580" y="417">Product</text>
+  <text class="attr" x="580" y="455">seller: User</text>
+  <text class="attr" x="580" y="477">category: Category</text>
+  <text class="attr" x="580" y="499">productName: text</text>
+  <text class="attr" x="580" y="521">description: textarea</text>
+  <text class="attr" x="580" y="543">basePrice: number</text>
+  <text class="attr" x="580" y="565">status: available | out-of-stock | hidden</text>
+
+  <!-- ProductVariant -->
+  <rect class="class" x="560" y="715" width="310" height="145" />
+  <rect class="head" x="560" y="715" width="310" height="42" />
+  <text class="name" x="580" y="742">ProductVariant</text>
+  <text class="attr" x="580" y="780">product: Product</text>
+  <text class="attr" x="580" y="802">color: text</text>
+  <text class="attr" x="580" y="824">size: text</text>
+  <text class="attr" x="580" y="846">additionalPrice: number</text>
+
+  <!-- CartItem -->
+  <rect class="class" x="470" y="990" width="280" height="120" />
+  <rect class="head" x="470" y="990" width="280" height="42" />
+  <text class="name" x="490" y="1017">CartItem</text>
+  <text class="attr" x="490" y="1055">cart: Cart</text>
+  <text class="attr" x="490" y="1077">variant: ProductVariant</text>
+  <text class="attr" x="490" y="1099">quantity: number</text>
+
+  <!-- ProductImage -->
+  <rect class="class" x="1040" y="130" width="300" height="120" />
+  <rect class="head" x="1040" y="130" width="300" height="42" />
+  <text class="name" x="1060" y="157">ProductImage</text>
+  <text class="attr" x="1060" y="195">product: Product</text>
+  <text class="attr" x="1060" y="217">image: Media</text>
+  <text class="attr" x="1060" y="239">displayOrder: number</text>
+
+  <!-- Media -->
+  <rect class="class" x="1480" y="130" width="260" height="120" />
+  <rect class="head" x="1480" y="130" width="260" height="42" />
+  <text class="name" x="1500" y="157">Media</text>
+  <text class="attr" x="1500" y="195">alt: text?</text>
+  <text class="attr" x="1500" y="217">caption: richText?</text>
+  <text class="attr" x="1500" y="239">upload file metadata</text>
+
+  <!-- Inventory -->
+  <rect class="class" x="1040" y="715" width="300" height="120" />
+  <rect class="head" x="1040" y="715" width="300" height="42" />
+  <text class="name" x="1060" y="742">Inventory</text>
+  <text class="attr" x="1060" y="780">variant: ProductVariant, unique</text>
+  <text class="attr" x="1060" y="802">stockQuantity: number</text>
+  <text class="attr" x="1060" y="824">reservedQuantity: number</text>
+
+  <!-- Order -->
+  <rect class="class" x="1040" y="940" width="330" height="210" />
+  <rect class="head" x="1040" y="940" width="330" height="42" />
+  <text class="name" x="1060" y="967">Order</text>
+  <text class="attr" x="1060" y="1005">buyer: User</text>
+  <text class="attr" x="1060" y="1027">shippingAddress: Address</text>
+  <text class="attr" x="1060" y="1049">paymentMethod: card | banking | COD</text>
+  <text class="attr" x="1060" y="1071">paymentStatus: pending | paid | failed</text>
+  <text class="attr" x="1060" y="1093">orderStatus: pending | processing | shipped...</text>
+  <text class="attr" x="1060" y="1115">subtotal, shippingFee, totalAmount</text>
+  <text class="attr" x="1060" y="1137">orderDate: date</text>
+
+  <!-- OrderItem -->
+  <rect class="class" x="1440" y="940" width="300" height="145" />
+  <rect class="head" x="1440" y="940" width="300" height="42" />
+  <text class="name" x="1460" y="967">OrderItem</text>
+  <text class="attr" x="1460" y="1005">order: Order</text>
+  <text class="attr" x="1460" y="1027">variant: ProductVariant</text>
+  <text class="attr" x="1460" y="1049">seller: User</text>
+  <text class="attr" x="1460" y="1071">quantity, unitPrice, subtotal</text>
+
+  <!-- Relationships -->
+  <path class="rel" d="M360 240 C440 240, 470 485, 560 485" />
+  <text class="relLabel" x="405" y="345">User 1 -> * Product / seller lists products</text>
+
+  <path class="rel" d="M715 290 L715 390" />
+  <text class="relLabel" x="730" y="345">Category 1 -> * Product / browsing group</text>
+
+  <path class="rel" d="M870 485 C950 485, 985 190, 1040 190" />
+  <text class="relLabel" x="905" y="330">Product 1 -> * ProductImage / gallery</text>
+
+  <path class="rel" d="M1340 190 L1480 190" />
+  <text class="relLabel" x="1370" y="180">ProductImage * -> 1 Media / uploaded asset</text>
+
+  <path class="rel" d="M715 580 L715 715" />
+  <text class="relLabel" x="730" y="655">Product 1 -> * ProductVariant / purchasable options</text>
+
+  <path class="rel" d="M870 787 L1040 787" />
+  <text class="relLabel" x="890" y="775">ProductVariant 1 -> 1 Inventory / stock control</text>
+
+  <path class="rel" d="M360 555 L560 485" />
+  <text class="relLabel" x="385" y="535">Address * -> 1 User / saved delivery info</text>
+
+  <path class="rel" d="M320 833 C390 833, 400 1050, 470 1050" />
+  <text class="relLabel" x="320" y="955">Cart 1 -> * CartItem / selected items</text>
+
+  <path class="rel" d="M750 1050 C830 1050, 520 835, 560 790" />
+  <text class="relLabel" x="610" y="930">CartItem * -> 1 Variant / chosen option</text>
+
+  <path class="rel" d="M360 270 C420 270, 445 820, 320 833" />
+  <text class="relLabel" x="260" y="750">User 1 -> 1 Cart / active basket</text>
+
+  <path class="rel" d="M360 250 C515 260, 935 1005, 1040 1005" />
+  <text class="relLabel" x="600" y="910">User 1 -> * Order / buyer history</text>
+
+  <path class="rel" d="M360 1070 C535 1070, 875 1040, 1040 1027" />
+  <text class="relLabel" x="520" y="1095">Address 1 -> * Order / checkout destination</text>
+
+  <path class="rel" d="M1370 1012 L1440 1012" />
+  <text class="relLabel" x="1378" y="1000">Order 1 -> * OrderItem / purchased lines</text>
+
+  <path class="rel" d="M1440 1030 C1290 870, 1025 800, 870 800" />
+  <text class="relLabel" x="1060" y="890">OrderItem * -> 1 Variant / purchased option</text>
+
+  <path class="rel" d="M1440 1050 C900 1235, 420 345, 360 300" />
+  <text class="relLabel" x="760" y="1240">OrderItem * -> 1 User / seller attribution</text>
+
+  <path class="rel" d="M360 1080 C430 1080, 20 820, 100 350" />
+  <text class="relLabel" x="85" y="930">User 1 -> * Notification / recipient</text>
+
+  <path class="rel" d="M360 280 C680 40, 1395 70, 1480 185" />
+  <text class="relLabel" x="930" y="80">User * -> 1 Media / profile image</text>
+
+  <!-- Justification notes -->
+  <rect class="noteBox" x="1040" y="1195" width="700" height="105" />
+  <text class="noteTitle" x="1060" y="1222">Design Justification</text>
+  <text class="note" x="1060" y="1248">Product, ProductVariant, and Inventory are separate because listing data, option data, and stock change for different reasons.</text>
+  <text class="note" x="1060" y="1270">CartItem and OrderItem are association classes because quantity and pricing belong to the relationship, not only to ProductVariant.</text>
+  <text class="note" x="1060" y="1292">Order stores totals and statuses to preserve checkout history even if product prices or inventory later change.</text>
+</svg>

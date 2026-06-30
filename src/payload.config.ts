@@ -9,6 +9,16 @@ import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Users } from './collections/Users'
+import { Addresses } from './collections/Addresses'
+import { Carts } from './collections/Carts'
+import { CartItems } from './collections/CartItems'
+import { Inventory } from './collections/Inventory'
+import { Notifications } from './collections/Notifications'
+import { Orders } from './collections/Orders'
+import { OrderItems } from './collections/OrderItems'
+import { ProductImages } from './collections/ProductImages'
+import { Products } from './collections/Products'
+import { ProductVariants } from './collections/ProductVariants'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { plugins } from './plugins'
@@ -62,7 +72,23 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URL || '',
     },
   }),
-  collections: [Pages, Posts, Media, Categories, Users],
+  collections: [
+    Pages,
+    Posts,
+    Media,
+    Categories,
+    Users,
+    Addresses,
+    Products,
+    ProductImages,
+    ProductVariants,
+    Inventory,
+    Carts,
+    CartItems,
+    Orders,
+    OrderItems,
+    Notifications,
+  ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins,
