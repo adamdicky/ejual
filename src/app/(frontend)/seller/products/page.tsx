@@ -10,7 +10,7 @@ import { SellerShell } from './_components/SellerShell'
 import { getProductStock, type SellerProductRow } from './_lib'
 
 export default async function SellerProductsPage() {
-  const { user } = await getMeUser({ nullUserRedirect: '/admin/login' })
+  const { user } = await getMeUser({ nullUserRedirect: '/login' })
   const payload = await getPayload({ config: configPromise })
 
   const { docs: products } = await payload.find({
