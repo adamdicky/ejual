@@ -2,6 +2,10 @@ import { AuthShell } from '../_components/AuthShell'
 import { RegisterForm } from '../_components/RegisterForm'
 import { getMeUser } from '@/utilities/getMeUser'
 
+export const metadata = {
+  title: 'Create account | eJual',
+}
+
 export default async function RegisterPage() {
   await getMeUser({ validUserRedirect: '/shop' })
 

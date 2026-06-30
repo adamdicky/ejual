@@ -7,6 +7,10 @@ import { getRelationshipID } from '../seller/products/_lib'
 import { ShopCatalogue } from './_components/ShopCatalogue'
 import { ShopShell } from './_components/ShopShell'
 
+export const metadata = {
+  title: 'eJual Shop',
+}
+
 export const dynamic = 'force-dynamic'
 
 const getRelationship = <T extends { id: number }>(value: number | T): T | null => {

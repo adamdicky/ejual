@@ -41,6 +41,9 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    routes: {
+      unauthorized: '/forbidden',
+    },
     user: Users.slug,
     livePreview: {
       breakpoints: [

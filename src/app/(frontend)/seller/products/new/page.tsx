@@ -7,6 +7,10 @@ import { getMeUser } from '@/utilities/getMeUser'
 import { ProductForm } from '../_components/ProductForm'
 import { SellerShell } from '../_components/SellerShell'
 
+export const metadata = {
+  title: 'Add Product | eJual',
+}
+
 export default async function NewSellerProductPage() {
   const { user } = await getMeUser({ nullUserRedirect: '/login' })
   const payload = await getPayload({ config: configPromise })
