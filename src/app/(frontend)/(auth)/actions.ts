@@ -88,3 +88,9 @@ export const registerUser = async (
 
   redirect(authRedirect)
 }
+
+export const logoutUser = async () => {
+  const cookieStore = await cookies()
+  cookieStore.delete('payload-token')
+  redirect('/login')
+}

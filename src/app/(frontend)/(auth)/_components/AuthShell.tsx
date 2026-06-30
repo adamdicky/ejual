@@ -32,7 +32,7 @@ export function AuthShell({
   }, [])
 
   return (
-    <Container maw={460} py={{ base: 'xl', sm: 80 }}>
+    <Container className="auth-workspace-root" maw={460} py={{ base: 'xl', sm: 80 }}>
       <Stack gap="lg">
         <Box>
           <Group gap="xs" justify="center">

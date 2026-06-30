@@ -229,9 +229,33 @@ body.seller-workspace-active footer {
   display: none;
 }
 
+body:has(.seller-workspace-root) .admin-bar,
+body:has(.seller-workspace-root) header,
+body:has(.seller-workspace-root) footer {
+  display: none;
+}
+
 body.auth-workspace-active .admin-bar,
 body.auth-workspace-active header,
 body.auth-workspace-active footer {
+  display: none;
+}
+
+body:has(.auth-workspace-root) .admin-bar,
+body:has(.auth-workspace-root) header,
+body:has(.auth-workspace-root) footer {
+  display: none;
+}
+
+body.shop-workspace-active .admin-bar,
+body.shop-workspace-active header,
+body.shop-workspace-active footer {
+  display: none;
+}
+
+body:has(.shop-workspace-root) .admin-bar,
+body:has(.shop-workspace-root) header,
+body:has(.shop-workspace-root) footer {
   display: none;
 }
 
@@ -239,6 +263,22 @@ body.seller-workspace-active {
   background: var(--mantine-color-body);
 }
 
+body:has(.seller-workspace-root) {
+  background: var(--mantine-color-body);
+}
+
 body.auth-workspace-active {
   background: var(--mantine-color-body);
+}
+
+body:has(.auth-workspace-root) {
+  background: var(--mantine-color-body);
+}
+
+body.shop-workspace-active {
+  background: var(--mantine-color-gray-1);
+}
+
+body:has(.shop-workspace-root) {
+  background: var(--mantine-color-gray-1);
 }
