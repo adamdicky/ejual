@@ -222,3 +222,13 @@ html[data-theme='dark'],
 html[data-theme='light'] {
   opacity: initial;
 }
+
+body.seller-workspace-active .admin-bar,
+body.seller-workspace-active header,
+body.seller-workspace-active footer {
+  display: none;
+}
+
+body.seller-workspace-active {
+  background: var(--mantine-color-body);
+}

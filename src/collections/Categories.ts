@@ -17,12 +17,26 @@ export const Categories: CollectionConfig = {
   },
   fields: [
     {
+      name: 'categoryName',
+      type: 'text',
+      label: 'Category Name',
+      required: true,
+    },
+    {
       name: 'title',
       type: 'text',
       required: true,
+      admin: {
+        description: 'Used by the existing nested-docs and website template setup.',
+      },
+    },
+    {
+      name: 'description',
+      type: 'textarea',
     },
     slugField({
       position: undefined,
     }),
   ],
+  timestamps: true,
 }

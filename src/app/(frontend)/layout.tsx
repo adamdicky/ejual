@@ -13,6 +13,8 @@ import { InitTheme } from '@/providers/Theme/InitTheme'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { draftMode } from 'next/headers'
 
+import '@mantine/core/styles.css'
+import '@mantine/notifications/styles.css'
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
 

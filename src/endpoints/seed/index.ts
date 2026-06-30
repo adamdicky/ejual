@@ -102,8 +102,11 @@ export const seed = async ({
     payload.create({
       collection: 'users',
       data: {
+        fullName: 'Demo Author',
         name: 'Demo Author',
         email: 'demo-author@example.com',
+        role: 'admin',
+        accountStatus: 'active',
         password: 'password',
       },
     }),
@@ -131,6 +134,7 @@ export const seed = async ({
       payload.create({
         collection: 'categories',
         data: {
+          categoryName: category,
           title: category,
           slug: category,
         },
