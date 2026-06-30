@@ -12,10 +12,12 @@ import {
   Text,
   Title,
 } from '@mantine/core'
-import { Boxes, LayoutDashboard, Plus, ShoppingBag } from 'lucide-react'
+import { Boxes, LayoutDashboard, LogOut, Plus, ShoppingBag, Store } from 'lucide-react'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { useEffect } from 'react'
+
+import { logoutUser } from '@/app/(frontend)/(auth)/actions'
 
 type SellerShellProps = {
   children: ReactNode
@@ -37,9 +39,10 @@ export function SellerShell({ children, description, primaryAction, title }: Sel
   }, [])
 
   return (
-    <AppShell navbar={{ breakpoint: 'md', width: 260 }} padding="md">
+    <AppShell className="seller-workspace-root" navbar={{ breakpoint: 'md', width: 260 }} padding="md">
       <AppShell.Navbar p="md">
-        <Stack gap="lg">
+        <Stack gap="lg" h="100%" justify="space-between">
+          <Stack gap="lg">
           <Box>
             <Group gap="xs">
               <ShoppingBag size={22} strokeWidth={1.8} />
@@ -63,6 +66,30 @@ export function SellerShell({ children, description, primaryAction, title }: Sel
               leftSection={<LayoutDashboard size={18} strokeWidth={1.8} />}
               rightSection={<Badge variant="light">Next</Badge>}
             />
+          </Stack>
+          </Stack>
+          <Stack gap="xs">
+            <Button
+              component={Link}
+              href="/shop"
+              justify="flex-start"
+              leftSection={<Store size={18} />}
+              variant="light"
+            >
+              Shop as Buyer
+            </Button>
+            <form action={logoutUser}>
+              <Button
+                color="gray"
+                fullWidth
+                justify="flex-start"
+                leftSection={<LogOut size={18} />}
+                type="submit"
+                variant="subtle"
+              >
+                Log out
+              </Button>
+            </form>
           </Stack>
         </Stack>
       </AppShell.Navbar>
