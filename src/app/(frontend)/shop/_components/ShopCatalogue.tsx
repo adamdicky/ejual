@@ -1,4 +1,7 @@
+'use client'
+
 import {
+  ActionIcon,
   Badge,
   Box,
   Button,
@@ -12,7 +15,10 @@ import {
   Text,
   TextInput,
 } from '@mantine/core'
-import { CheckCircle2, Grid2X2, Search, Shirt, Sparkles } from 'lucide-react'
+import { CheckCircle2, ChevronLeft, ChevronRight, Search, Shirt, Sparkles } from 'lucide-react'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
+import { useDeferredValue, useEffect, useState } from 'react'
 
 type ShopProduct = {
   category: string
@@ -20,8 +26,10 @@ type ShopProduct = {
   description: string
   featured: boolean
   id: number
-  imageAlt: string
-  imageURL: string | null
+  images: {
+    alt: string
+    url: string
+  }[]
   maxPrice: number
   minPrice: number
   productName: string
@@ -69,6 +77,65 @@ function categoryHref(categoryID: number | null, query: string, sort: string) {
   return queryString ? `/shop?${queryString}` : '/shop'
 }
 
+function ProductImageCarousel({ images, productName }: Pick<ShopProduct, 'images' | 'productName'>) {
+  const [index, setIndex] = useState(0)
+
+  useEffect(() => {
+    setIndex(0)
+  }, [images])
+
+  if (!images.length) {
+    return (
+      <Stack align="center" h={{ base: 280, md: 360 }} justify="center">
+        <Shirt color="var(--mantine-color-gray-5)" size={72} strokeWidth={1.4} />
+        <Text c="dimmed" size="sm">
+          Image coming soon
+        </Text>
+      </Stack>
+    )
+  }
+
+  const currentImage = images[index]
+  const canScroll = images.length > 1
+
+  return (
+    <Box pos="relative">
+      <Image alt={currentImage.alt} fit="contain" h={{ base: 280, md: 360 }} p="xl" src={currentImage.url} />
+      {canScroll ? (
+        <>
+          <ActionIcon
+            aria-label={`Previous image for ${productName}`}
+            left={14}
+            onClick={() => setIndex((current) => (current - 1 + images.length) % images.length)}
+            pos="absolute"
+            radius="xl"
+            style={{ transform: 'translateY(-50%)' }}
+            top="50%"
+            variant="white"
+          >
+            <ChevronLeft size={18} />
+          </ActionIcon>
+          <ActionIcon
+            aria-label={`Next image for ${productName}`}
+            onClick={() => setIndex((current) => (current + 1) % images.length)}
+            pos="absolute"
+            radius="xl"
+            right={14}
+            style={{ transform: 'translateY(-50%)' }}
+            top="50%"
+            variant="white"
+          >
+            <ChevronRight size={18} />
+          </ActionIcon>
+          <Badge bottom={14} pos="absolute" right={14} variant="light">
+            {index + 1} / {images.length}
+          </Badge>
+        </>
+      ) : null}
+    </Box>
+  )
+}
+
 export function ShopCatalogue({
   activeCategoryID,
   categories,
@@ -76,6 +143,40 @@ export function ShopCatalogue({
   query,
   sort,
 }: ShopCatalogueProps) {
+  const pathname = usePathname()
+  const router = useRouter()
+  const [searchValue, setSearchValue] = useState(query)
+  const deferredSearchValue = useDeferredValue(searchValue)
+
+  useEffect(() => {
+    setSearchValue(query)
+  }, [query])
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      if (deferredSearchValue === query) return
+
+      const params = new URLSearchParams()
+      if (activeCategoryID) params.set('category', String(activeCategoryID))
+      if (deferredSearchValue.trim()) params.set('q', deferredSearchValue.trim())
+      if (sort !== 'featured') params.set('sort', sort)
+      const queryString = params.toString()
+      router.replace(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false })
+    }, 250)
+
+    return () => window.clearTimeout(timeout)
+  }, [activeCategoryID, deferredSearchValue, pathname, query, router, sort])
+
+  const updateSort = (value: string) => {
+    const nextSort = value || 'featured'
+    const params = new URLSearchParams()
+    if (activeCategoryID) params.set('category', String(activeCategoryID))
+    if (searchValue.trim()) params.set('q', searchValue.trim())
+    if (nextSort !== 'featured') params.set('sort', nextSort)
+    const queryString = params.toString()
+    router.replace(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false })
+  }
+
   const normalizedQuery = query.trim().toLowerCase()
   const visibleProducts = products
     .filter((product) => {
@@ -97,50 +198,47 @@ export function ShopCatalogue({
 
   return (
     <Stack gap="lg">
-      <Group align="center" justify="space-between">
-        <ScrollArea type="never" w={{ base: '100%', md: 'auto' }}>
-          <Group gap="xs" wrap="nowrap">
+      <ScrollArea offsetScrollbars scrollbarSize={6} type="auto">
+        <Group gap="xs" wrap="nowrap">
             <Button
-              component="a"
+              component={Link}
               href={categoryHref(null, query, sort)}
-              leftSection={<Grid2X2 size={17} />}
+              miw="max-content"
               variant={activeCategoryID === null ? 'filled' : 'default'}
             >
               All
             </Button>
             {categories.map((category) => (
               <Button
-                component="a"
+                component={Link}
                 href={categoryHref(category.id, query, sort)}
                 key={category.id}
-                leftSection={<Shirt size={17} />}
+                miw="max-content"
                 variant={activeCategoryID === category.id ? 'filled' : 'default'}
               >
                 {category.label}
               </Button>
             ))}
-          </Group>
-        </ScrollArea>
-        <Box component="form" action="/shop" w={{ base: '100%', md: 'auto' }}>
-          <Group grow>
-            {activeCategoryID ? <input name="category" type="hidden" value={activeCategoryID} /> : null}
-            <TextInput
-              defaultValue={query}
-              leftSection={<Search size={16} />}
-              name="q"
-              placeholder="Search clothing"
-            />
-            <NativeSelect
-              data={sortOptions}
-              defaultValue={sort}
-              label="Sort by"
-              name="sort"
-            />
-            <Button type="submit" variant="default">
-              Apply
-            </Button>
-          </Group>
-        </Box>
+        </Group>
+      </ScrollArea>
+
+      <Group align="end" gap="md" wrap="wrap">
+        <TextInput
+          flex={1}
+          leftSection={<Search size={16} />}
+          maw={{ md: 'calc(100% - 16rem)' }}
+          miw={{ base: '100%', md: 280 }}
+          onChange={(event) => setSearchValue(event.currentTarget.value)}
+          placeholder="Search clothing"
+          value={searchValue}
+        />
+        <NativeSelect
+          data={sortOptions}
+          label="Sort by"
+          onChange={(event) => updateSort(event.currentTarget.value)}
+          style={{ flex: '0 0 220px' }}
+          value={sort}
+        />
       </Group>
 
       {visibleProducts.length ? (
@@ -149,22 +247,7 @@ export function ShopCatalogue({
             <Card key={product.id} p={0}>
               <Stack gap={0}>
                 <Box pos="relative">
-                  {product.imageURL ? (
-                    <Image
-                      alt={product.imageAlt}
-                      fit="contain"
-                      h={{ base: 320, md: 380 }}
-                      p="xl"
-                      src={product.imageURL}
-                    />
-                  ) : (
-                    <Stack align="center" h={{ base: 320, md: 380 }} justify="center">
-                      <Shirt color="var(--mantine-color-gray-5)" size={72} strokeWidth={1.4} />
-                      <Text c="dimmed" size="sm">
-                        Image coming soon
-                      </Text>
-                    </Stack>
-                  )}
+                  <ProductImageCarousel images={product.images} productName={product.productName} />
                   {product.featured ? (
                     <Badge
                       leftSection={<Sparkles size={13} />}

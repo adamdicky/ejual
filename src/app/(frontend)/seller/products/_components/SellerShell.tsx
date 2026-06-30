@@ -27,9 +27,10 @@ type SellerShellProps = {
     label: string
   }
   title: string
+  userLabel?: string
 }
 
-export function SellerShell({ children, description, primaryAction, title }: SellerShellProps) {
+export function SellerShell({ children, description, primaryAction, title, userLabel }: SellerShellProps) {
   useEffect(() => {
     document.body.classList.add('seller-workspace-active')
 
@@ -51,6 +52,9 @@ export function SellerShell({ children, description, primaryAction, title }: Sel
             <Text c="dimmed" mt={4} size="sm">
               Catalogue workspace
             </Text>
+            <Badge mt="sm" variant="light">
+              Signed in as {userLabel}
+            </Badge>
           </Box>
           <Stack gap={4}>
             <NavLink

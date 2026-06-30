@@ -20,6 +20,7 @@ export default async function NewSellerProductPage() {
     <SellerShell
       description="Create the listing details first. Variants, image references, and inventory are managed after the product exists."
       title="Add product"
+      userLabel={user.fullName || user.email}
     >
       {user.accountStatus !== 'active' ? (
         <Alert color="red" icon={<AlertCircle size={18} />} title="Seller actions blocked">

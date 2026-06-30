@@ -4,6 +4,25 @@ import { redirect } from 'next/navigation'
 import type { User } from '../payload-types'
 import { getClientSideURL, getServerSideURL } from './getURL'
 
+export const getOptionalMeUser = async (): Promise<User | null> => {
+  const cookieStore = await cookies()
+  const token = cookieStore.get('payload-token')?.value
+
+  if (!token) return null
+
+  const baseURL = getClientSideURL() || getServerSideURL()
+  const meUserReq = await fetch(`${baseURL}/api/users/me`, {
+    headers: {
+      Authorization: `JWT ${token}`,
+    },
+  })
+
+  if (!meUserReq.ok) return null
+
+  const { user }: { user?: User } = await meUserReq.json()
+  return user || null
+}
+
 export const getMeUser = async (args?: {
   nullUserRedirect?: string
   validUserRedirect?: string

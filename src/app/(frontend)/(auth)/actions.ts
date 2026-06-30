@@ -9,7 +9,7 @@ export type AuthActionState = {
   error?: string
 } | null
 
-const authRedirect = '/seller/products'
+const authRedirect = '/shop'
 
 const stringFromForm = (formData: FormData, key: string): string => {
   const value = String(formData.get(key) || '').trim()

@@ -74,6 +74,7 @@ export default async function SellerProductsPage() {
       description="Manage listings, variants, image references, and stock before moving into cart and order workflows."
       primaryAction={{ href: '/seller/products/new', label: 'Add product' }}
       title="Products"
+      userLabel={user.fullName || user.email}
     >
       {user.accountStatus !== 'active' ? (
         <Alert color="red" icon={<AlertCircle size={18} />} title="Seller actions blocked">

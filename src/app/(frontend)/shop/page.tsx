@@ -2,6 +2,7 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
 import type { Category, Inventory, Media, ProductImage, ProductVariant, User } from '@/payload-types'
+import { getOptionalMeUser } from '@/utilities/getMeUser'
 import { getRelationshipID } from '../seller/products/_lib'
 import { ShopCatalogue } from './_components/ShopCatalogue'
 import { ShopShell } from './_components/ShopShell'
@@ -27,6 +28,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   const activeCategoryID = params?.category ? Number(params.category) : null
   const query = String(params?.q || '').trim()
   const sort = allowedSorts.has(String(params?.sort)) ? String(params?.sort) : 'featured'
+  const currentUser = await getOptionalMeUser()
   const payload = await getPayload({ config: configPromise })
 
   const [{ docs: products }, { docs: categories }] = await Promise.all([
@@ -48,7 +50,12 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     }),
   ])
 
-  const productIDs = products.map((product) => product.id)
+  const visibleProducts = products.filter((product) => {
+    if (!currentUser) return true
+    return getRelationshipID(product.seller) !== currentUser.id
+  })
+
+  const productIDs = visibleProducts.map((product) => product.id)
   const [{ docs: variants }, { docs: images }] = await Promise.all([
     productIDs.length
       ? payload.find({
@@ -77,15 +84,13 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
       })
     : { docs: [] as Inventory[] }
 
-  const shopProducts = products.map((product) => {
+  const shopProducts = visibleProducts.map((product) => {
     const category = getRelationship<Category>(product.category)
     const seller = getRelationship<User>(product.seller)
     const productVariants = variants.filter((variant) => getRelationshipID(variant.product) === product.id)
     const variantIDsForProduct = new Set(productVariants.map((variant) => variant.id))
     const productInventory = inventory.filter((item) => variantIDsForProduct.has(getRelationshipID(item.variant)))
     const productImages = images.filter((image) => getRelationshipID(image.product) === product.id)
-    const primaryImage = productImages[0]
-    const media = primaryImage ? getRelationship<Media>(primaryImage.image) : null
     const variantPrices = productVariants.map((variant) => product.basePrice + variant.additionalPrice)
     const prices = variantPrices.length ? variantPrices : [product.basePrice]
     const stock = productInventory.reduce(
@@ -99,8 +104,13 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
       description: product.description,
       featured: Boolean(product.featured),
       id: product.id,
-      imageAlt: media?.alt || product.productName,
-      imageURL: media?.url || media?.thumbnailURL || null,
+      images: productImages
+        .map((productImage) => getRelationship<Media>(productImage.image))
+        .filter((media): media is Media => Boolean(media?.url || media?.thumbnailURL))
+        .map((media) => ({
+          alt: media.alt || product.productName,
+          url: media.url || media.thumbnailURL || '',
+        })),
       maxPrice: Math.max(...prices),
       minPrice: Math.min(...prices),
       productName: product.productName,
@@ -112,7 +122,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   })
 
   return (
-    <ShopShell>
+    <ShopShell currentUserLabel={currentUser?.fullName || currentUser?.email || null}>
       <ShopCatalogue
         activeCategoryID={Number.isFinite(activeCategoryID) ? activeCategoryID : null}
         categories={categories.map((category) => ({

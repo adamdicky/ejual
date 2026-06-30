@@ -75,6 +75,7 @@ export default async function EditSellerProductPage({ params }: EditSellerProduc
     <SellerShell
       description="Update the listing, then manage purchasable variants, product image references, and stock records."
       title={product.productName}
+      userLabel={user.fullName || user.email}
     >
       {user.accountStatus !== 'active' ? (
         <Alert

@@ -3,7 +3,7 @@ import { RegisterForm } from '../_components/RegisterForm'
 import { getMeUser } from '@/utilities/getMeUser'
 
 export default async function RegisterPage() {
-  await getMeUser({ validUserRedirect: '/seller/products' })
+  await getMeUser({ validUserRedirect: '/shop' })
 
   return (
     <AuthShell

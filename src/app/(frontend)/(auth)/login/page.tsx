@@ -3,7 +3,7 @@ import { LoginForm } from '../_components/LoginForm'
 import { getMeUser } from '@/utilities/getMeUser'
 
 export default async function LoginPage() {
-  await getMeUser({ validUserRedirect: '/seller/products' })
+  await getMeUser({ validUserRedirect: '/shop' })
 
   return (
     <AuthShell

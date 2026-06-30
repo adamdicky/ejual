@@ -1,16 +1,19 @@
 'use client'
 
-import { AppShell, Box, Button, Container, Group, Stack, Text, Title } from '@mantine/core'
-import { LayoutDashboard, ShoppingBag } from 'lucide-react'
+import { AppShell, Badge, Box, Button, Container, Group, Stack, Text, Title } from '@mantine/core'
+import { LayoutDashboard, LogOut, ShoppingBag } from 'lucide-react'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { useEffect } from 'react'
 
+import { logoutUser } from '@/app/(frontend)/(auth)/actions'
+
 type ShopShellProps = {
   children: ReactNode
+  currentUserLabel?: string | null
 }
 
-export function ShopShell({ children }: ShopShellProps) {
+export function ShopShell({ children, currentUserLabel }: ShopShellProps) {
   useEffect(() => {
     document.body.classList.add('shop-workspace-active')
 
@@ -24,7 +27,7 @@ export function ShopShell({ children }: ShopShellProps) {
       <AppShell.Main>
         <Container maw={1500} py="lg">
           <Stack gap="lg">
-            <Group align="center" justify="space-between">
+            <Group align="flex-start" justify="space-between">
               <Box>
                 <Group gap="xs">
                   <ShoppingBag size={26} strokeWidth={1.8} />
@@ -34,14 +37,32 @@ export function ShopShell({ children }: ShopShellProps) {
                   Browse clothing from sellers across eJual.
                 </Text>
               </Box>
-              <Button
-                component={Link}
-                href="/seller/products"
-                leftSection={<LayoutDashboard size={18} />}
-                variant="filled"
-              >
-                Seller Workspace
-              </Button>
+              <Stack align="flex-end" gap="xs">
+                <Badge color={currentUserLabel ? 'teal' : 'gray'} size="lg" variant="light">
+                  {currentUserLabel ? `Signed in as ${currentUserLabel}` : 'Browsing as guest'}
+                </Badge>
+                <Group gap="sm">
+                  {currentUserLabel ? (
+                    <form action={logoutUser}>
+                      <Button leftSection={<LogOut size={16} />} type="submit" variant="default">
+                        Log out
+                      </Button>
+                    </form>
+                  ) : (
+                    <Button component={Link} href="/login" variant="default">
+                      Sign in
+                    </Button>
+                  )}
+                  <Button
+                    component={Link}
+                    href="/seller/products"
+                    leftSection={<LayoutDashboard size={18} />}
+                    variant="filled"
+                  >
+                    Seller Workspace
+                  </Button>
+                </Group>
+              </Stack>
             </Group>
             {children}
           </Stack>
