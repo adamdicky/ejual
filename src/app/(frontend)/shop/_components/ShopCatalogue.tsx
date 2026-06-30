@@ -244,8 +244,8 @@ export function ShopCatalogue({
       {visibleProducts.length ? (
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
           {visibleProducts.map((product) => (
-            <Card key={product.id} p={0}>
-              <Stack gap={0}>
+            <Card h="100%" key={product.id} p={0}>
+              <Stack gap={0} h="100%">
                 <Box pos="relative">
                   <ProductImageCarousel images={product.images} productName={product.productName} />
                   {product.featured ? (
@@ -261,7 +261,7 @@ export function ShopCatalogue({
                     </Badge>
                   ) : null}
                 </Box>
-                <Stack gap="xs" p="lg">
+                <Stack flex={1} gap="md" justify="space-between" p="lg">
                   <Group justify="space-between">
                     <Text c="dimmed" size="sm">
                       {product.sellerName} · {product.category}
@@ -274,18 +274,18 @@ export function ShopCatalogue({
                       {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
                     </Badge>
                   </Group>
+                  <Stack flex={1} gap="xs">
+                    <Text fw={700} lineClamp={2} mah={64} size="lg">
+                      {product.productName}
+                    </Text>
+                    <Text c="dimmed" lineClamp={2} mah={44} size="sm">
+                      {product.description}
+                    </Text>
+                  </Stack>
                   <Group align="flex-end" justify="space-between">
-                    <Stack gap={2}>
-                      <Text fw={700} size="lg">
-                        {product.productName}
-                      </Text>
-                      <Text c="dimmed" lineClamp={2} size="sm">
-                        {product.description}
-                      </Text>
-                      <Text c="dimmed" size="xs">
-                        {product.variantCount} {product.variantCount === 1 ? 'variant' : 'variants'}
-                      </Text>
-                    </Stack>
+                    <Text c="dimmed" size="xs">
+                      {product.variantCount} {product.variantCount === 1 ? 'variant' : 'variants'}
+                    </Text>
                     <Text fw={700} size="lg">
                       {formatPriceRange(product)}
                     </Text>
