@@ -1,7 +1,7 @@
 'use client'
 
 import { AppShell, Badge, Box, Button, Container, Group, Stack, Text, Title } from '@mantine/core'
-import { LayoutDashboard, LogOut, ShoppingBag } from 'lucide-react'
+import { LayoutDashboard, LogOut, PackageCheck, ShoppingBag, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { useEffect } from 'react'
@@ -9,11 +9,12 @@ import { useEffect } from 'react'
 import { logoutUser } from '@/app/(frontend)/(auth)/actions'
 
 type ShopShellProps = {
+  cartItemCount?: number
   children: ReactNode
   currentUserLabel?: string | null
 }
 
-export function ShopShell({ children, currentUserLabel }: ShopShellProps) {
+export function ShopShell({ children, currentUserLabel, cartItemCount }: ShopShellProps) {
   useEffect(() => {
     document.body.classList.add('shop-workspace-active')
 
@@ -53,6 +54,17 @@ export function ShopShell({ children, currentUserLabel }: ShopShellProps) {
                       Sign in
                     </Button>
                   )}
+                  <Button component={Link} href="/cart" leftSection={<ShoppingCart size={18} />} variant="default">
+                    Cart {typeof cartItemCount === 'number' ? `(${cartItemCount})` : ''}
+                  </Button>
+                  <Button
+                    component={Link}
+                    href="/my-purchases"
+                    leftSection={<PackageCheck size={18} />}
+                    variant="default"
+                  >
+                    My Purchases
+                  </Button>
                   <Button
                     component={Link}
                     href="/seller/products"

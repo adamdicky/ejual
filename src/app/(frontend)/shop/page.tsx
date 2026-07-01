@@ -35,6 +35,19 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   const currentUser = await getOptionalMeUser()
   const payload = await getPayload({ config: configPromise })
 
+  let cartItemCount = 0
+  if (currentUser) {
+    const { docs: cartItems } = await payload.find({
+      collection: 'cart-items',
+      limit: 100,
+      overrideAccess: false,
+      user: currentUser,
+      where: { 'cart.user': { equals: currentUser.id } },
+    })
+
+    cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0)
+  }
+
   const [{ docs: products }, { docs: categories }] = await Promise.all([
     payload.find({
       collection: 'products',
@@ -101,10 +114,39 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
       (total, item) => total + Math.max(item.stockQuantity - item.reservedQuantity, 0),
       0,
     )
+    const availableVariants = productVariants
+      .map((variant) => {
+        const inventoryItem = productInventory.find(
+          (item) => getRelationshipID(item.variant) === variant.id,
+        )
+
+        if (!inventoryItem) return null
+
+        const availableQuantity = Math.max(inventoryItem.stockQuantity - inventoryItem.reservedQuantity, 0)
+        if (availableQuantity <= 0) return null
+
+        return {
+          id: variant.id,
+          label: `${variant.color} / ${variant.size} - RM ${(product.basePrice + variant.additionalPrice).toFixed(2)} (${availableQuantity} available)`,
+        }
+      })
+      .filter((variant): variant is { id: number; label: string } => Boolean(variant))
+
+    const defaultVariant = productVariants.find((variant) => {
+      const inventoryItem = productInventory.find(
+        (item) => getRelationshipID(item.variant) === variant.id,
+      )
+
+      if (!inventoryItem) return false
+      return Math.max(inventoryItem.stockQuantity - inventoryItem.reservedQuantity, 0) > 0
+    })
 
     return {
+      availableVariants,
+      canAddToCart: Boolean(defaultVariant),
       category: category?.categoryName || 'Clothing',
       categoryID: category?.id || 0,
+      defaultVariantID: defaultVariant?.id || null,
       description: product.description,
       featured: Boolean(product.featured),
       id: product.id,
@@ -126,7 +168,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   })
 
   return (
-    <ShopShell currentUserLabel={currentUser?.fullName || currentUser?.email || null}>
+    <ShopShell cartItemCount={cartItemCount} currentUserLabel={currentUser?.fullName || currentUser?.email || null}>
       <ShopCatalogue
         activeCategoryID={Number.isFinite(activeCategoryID) ? activeCategoryID : null}
         categories={categories.map((category) => ({
