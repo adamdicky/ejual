@@ -2,6 +2,7 @@
 
 import {
   ActionIcon,
+  Alert,
   Badge,
   Box,
   Button,
@@ -14,15 +15,21 @@ import {
   Stack,
   Text,
   TextInput,
+  Transition,
 } from '@mantine/core'
-import { CheckCircle2, ChevronLeft, ChevronRight, Search, Shirt, Sparkles } from 'lucide-react'
+import { CheckCircle2, ChevronLeft, ChevronRight, Search, Shirt, ShoppingCart, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useDeferredValue, useEffect, useState } from 'react'
+import { useActionState, useDeferredValue, useEffect, useState } from 'react'
+
+import { addToCart } from '@/app/(frontend)/cart/actions'
 
 type ShopProduct = {
+  availableVariants: Array<{ id: number; label: string }>
+  canAddToCart: boolean
   category: string
   categoryID: number
+  defaultVariantID: number | null
   description: string
   featured: boolean
   id: number
@@ -143,14 +150,33 @@ export function ShopCatalogue({
   query,
   sort,
 }: ShopCatalogueProps) {
+  const [addState, addAction, isAdding] = useActionState(addToCart, null)
   const pathname = usePathname()
   const router = useRouter()
+  const [showAddSuccess, setShowAddSuccess] = useState(false)
   const [searchValue, setSearchValue] = useState(query)
   const deferredSearchValue = useDeferredValue(searchValue)
 
   useEffect(() => {
     setSearchValue(query)
   }, [query])
+
+  useEffect(() => {
+    if (!addState?.success) return
+
+    setShowAddSuccess(true)
+    const timeout = window.setTimeout(() => {
+      setShowAddSuccess(false)
+    }, 3200)
+
+    return () => window.clearTimeout(timeout)
+  }, [addState?.success])
+
+  useEffect(() => {
+    if (addState?.error) {
+      setShowAddSuccess(false)
+    }
+  }, [addState?.error])
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -198,6 +224,17 @@ export function ShopCatalogue({
 
   return (
     <Stack gap="lg">
+      {addState?.error ? <Alert color="red">{addState.error}</Alert> : null}
+      <Transition duration={220} mounted={showAddSuccess} timingFunction="ease" transition="slide-down">
+        {(styles) => (
+          <Alert color="teal" style={styles} title="Added to cart">
+            {addState?.success}{' '}
+            {typeof addState?.cartItemCount === 'number'
+              ? `You now have ${addState.cartItemCount} item${addState.cartItemCount === 1 ? '' : 's'} in your cart.`
+              : null}
+          </Alert>
+        )}
+      </Transition>
       <ScrollArea offsetScrollbars scrollbarSize={6} type="auto">
         <Group gap="xs" wrap="nowrap">
             <Button
@@ -290,6 +327,35 @@ export function ShopCatalogue({
                       {formatPriceRange(product)}
                     </Text>
                   </Group>
+                  <form action={addAction}>
+                    <input name="quantity" type="hidden" value="1" />
+                    <NativeSelect
+                      data={
+                        product.availableVariants.length
+                          ? product.availableVariants.map((variant) => ({
+                              label: variant.label,
+                              value: String(variant.id),
+                            }))
+                          : [{ label: 'Out of stock', value: '' }]
+                      }
+                      disabled={!product.canAddToCart}
+                      defaultValue={String(product.defaultVariantID || '')}
+                      label="Variant"
+                      name="variantID"
+                      required
+                    />
+                    <Button
+                      disabled={!product.canAddToCart || !product.defaultVariantID}
+                      leftSection={<ShoppingCart size={16} />}
+                      loading={isAdding}
+                      mt="xs"
+                      type="submit"
+                      variant="filled"
+                      w="100%"
+                    >
+                      Add to cart
+                    </Button>
+                  </form>
                 </Stack>
               </Stack>
             </Card>
