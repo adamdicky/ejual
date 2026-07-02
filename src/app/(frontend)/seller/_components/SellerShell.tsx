@@ -20,6 +20,7 @@ import { useEffect } from 'react'
 import { logoutUser } from '@/app/(frontend)/(auth)/actions'
 
 type SellerShellProps = {
+  activeNav?: 'orders' | 'products'
   children: ReactNode
   description: string
   primaryAction?: {
@@ -30,7 +31,14 @@ type SellerShellProps = {
   userLabel?: string
 }
 
-export function SellerShell({ children, description, primaryAction, title, userLabel }: SellerShellProps) {
+export function SellerShell({
+  activeNav = 'products',
+  children,
+  description,
+  primaryAction,
+  title,
+  userLabel,
+}: SellerShellProps) {
   useEffect(() => {
     document.body.classList.add('seller-workspace-active')
 
@@ -40,37 +48,42 @@ export function SellerShell({ children, description, primaryAction, title, userL
   }, [])
 
   return (
-    <AppShell className="seller-workspace-root" navbar={{ breakpoint: 'md', width: 260 }} padding="md">
+    <AppShell
+      className="seller-workspace-root"
+      navbar={{ breakpoint: 'md', width: 260 }}
+      padding="md"
+    >
       <AppShell.Navbar p="md">
         <Stack gap="lg" h="100%" justify="space-between">
           <Stack gap="lg">
-          <Box>
-            <Group gap="xs">
-              <ShoppingBag size={22} strokeWidth={1.8} />
-              <Title order={3}>eJual Seller</Title>
-            </Group>
-            <Text c="dimmed" mt={4} size="sm">
-              Catalogue workspace
-            </Text>
-            <Badge mt="sm" variant="light">
-              Signed in as {userLabel}
-            </Badge>
-          </Box>
-          <Stack gap={4}>
-            <NavLink
-              active
-              component={Link}
-              href="/seller/products"
-              label="Products"
-              leftSection={<Boxes size={18} strokeWidth={1.8} />}
-            />
-            <NavLink
-              disabled
-              label="Orders"
-              leftSection={<LayoutDashboard size={18} strokeWidth={1.8} />}
-              rightSection={<Badge variant="light">Next</Badge>}
-            />
-          </Stack>
+            <Box>
+              <Group gap="xs">
+                <ShoppingBag size={22} strokeWidth={1.8} />
+                <Title order={3}>eJual Seller</Title>
+              </Group>
+              <Text c="dimmed" mt={4} size="sm">
+                Catalogue workspace
+              </Text>
+              <Badge mt="sm" variant="light">
+                Signed in as {userLabel}
+              </Badge>
+            </Box>
+            <Stack gap={4}>
+              <NavLink
+                active={activeNav === 'products'}
+                component={Link}
+                href="/seller/products"
+                label="Products"
+                leftSection={<Boxes size={18} strokeWidth={1.8} />}
+              />
+              <NavLink
+                active={activeNav === 'orders'}
+                component={Link}
+                href="/seller/orders"
+                label="Orders"
+                leftSection={<LayoutDashboard size={18} strokeWidth={1.8} />}
+              />
+            </Stack>
           </Stack>
           <Stack gap="xs">
             <Button
@@ -108,11 +121,7 @@ export function SellerShell({ children, description, primaryAction, title, userL
                 </Text>
               </Box>
               {primaryAction ? (
-                <Button
-                  component={Link}
-                  href={primaryAction.href}
-                  leftSection={<Plus size={18} />}
-                >
+                <Button component={Link} href={primaryAction.href} leftSection={<Plus size={18} />}>
                   {primaryAction.label}
                 </Button>
               ) : null}

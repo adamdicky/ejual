@@ -44,11 +44,21 @@ export function ShopShell({ children, currentUserLabel, cartItemCount }: ShopShe
                 </Badge>
                 <Group gap="sm">
                   {currentUserLabel ? (
-                    <form action={logoutUser}>
-                      <Button leftSection={<LogOut size={16} />} type="submit" variant="default">
-                        Log out
+                    <>
+                      <Button
+                        component={Link}
+                        href="/orders"
+                        leftSection={<PackageSearch size={16} />}
+                        variant="default"
+                      >
+                        My Orders
                       </Button>
-                    </form>
+                      <form action={logoutUser}>
+                        <Button leftSection={<LogOut size={16} />} type="submit" variant="default">
+                          Log out
+                        </Button>
+                      </form>
+                    </>
                   ) : (
                     <Button component={Link} href="/login" variant="default">
                       Sign in
