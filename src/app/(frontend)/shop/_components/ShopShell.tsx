@@ -1,6 +1,7 @@
 'use client'
 
 import { AppShell, Badge, Box, Button, Container, Group, Stack, Text, Title } from '@mantine/core'
+<<<<<<< HEAD
 import {
   LayoutDashboard,
   LogOut,
@@ -9,6 +10,9 @@ import {
   ShoppingBag,
   ShoppingCart,
 } from 'lucide-react'
+=======
+import { LayoutDashboard, LogOut, PackageCheck, PackageSearch, ShoppingBag, ShoppingCart } from 'lucide-react'
+>>>>>>> a892ff4 (feat: Update .README and import missing icon)
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { useEffect } from 'react'

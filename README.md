@@ -1,6 +1,6 @@
 # eJual
 
-eJual is a clothing-focused e-commerce system built with Payload CMS, Next.js, PostgreSQL, and Mantine UI. The first completed development slice is the Product and Catalogue Management component for sellers. The next planned components are Cart and Checkout, followed by Order and Payment.
+eJual is a clothing-focused e-commerce system built with Payload CMS, Next.js, PostgreSQL, and Mantine UI. It now includes the complete buyer and seller flow across product and catalogue management, cart and checkout, and order and payment management.
 
 ## Tech Stack
 
@@ -17,9 +17,13 @@ eJual is a clothing-focused e-commerce system built with Payload CMS, Next.js, P
 - `/shop` - buyer catalogue view for browsing clothing products
 - `/login` - app-facing login
 - `/register` - app-facing registration
+- `/cart` - buyer cart and checkout workspace
+- `/orders` - buyer order history and order details
+- `/my-purchases` - buyer purchase summary view
 - `/seller/products` - seller product catalogue workspace
 - `/seller/products/new` - seller product creation
 - `/seller/products/[id]/edit` - seller product details, variants, images, and inventory
+- `/seller/orders` - seller-side order management
 - `/admin` - Payload admin panel, restricted to users with `role === 'admin'`
 
 Legacy Payload template pages such as `/`, `/search`, and `/posts` redirect into `/shop` so the buyer-facing experience stays consistent with eJual.
@@ -221,9 +225,9 @@ Check for:
 - no unexpected console errors
 - no unexpected non-2xx network requests
 
-## Notes For Cart, Checkout, Order, And Payment Contributors
+## Notes For Future Contributors
 
-The next components should use the collections that already exist:
+The completed buyer and seller flows already use these collections:
 
 - Cart/Checkout: `carts`, `cart-items`, `inventory`, `addresses`, `products`, `product-variants`
 - Order/Payment: `orders`, `order-items`, `addresses`, `inventory`, `notifications`
@@ -248,7 +252,7 @@ Completed:
 - App-facing login/register
 - Admin-only Payload access guard
 
-Next:
-
 - Cart and Checkout Management Component
 - Order and Payment Management Component
+- Buyer order history and purchase tracking
+- Seller order management
