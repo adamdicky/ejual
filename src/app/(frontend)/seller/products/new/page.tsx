@@ -5,7 +5,7 @@ import { getPayload } from 'payload'
 
 import { getMeUser } from '@/utilities/getMeUser'
 import { ProductForm } from '../_components/ProductForm'
-import { SellerShell } from '../_components/SellerShell'
+import { SellerShell } from '../../_components/SellerShell'
 
 export const metadata = {
   title: 'Add Product | eJual',
@@ -22,6 +22,7 @@ export default async function NewSellerProductPage() {
 
   return (
     <SellerShell
+      activeNav="products"
       description="Create the listing details first. Variants, image references, and inventory are managed after the product exists."
       title="Add product"
       userLabel={user.fullName || user.email}

@@ -6,7 +6,7 @@ import { getPayload } from 'payload'
 import type { Inventory, ProductImage, ProductVariant } from '@/payload-types'
 import { getMeUser } from '@/utilities/getMeUser'
 import { ProductListClient } from './_components/ProductListClient'
-import { SellerShell } from './_components/SellerShell'
+import { SellerShell } from '../_components/SellerShell'
 import { getProductStock, type SellerProductRow } from './_lib'
 
 export const metadata = {
@@ -75,6 +75,7 @@ export default async function SellerProductsPage() {
 
   return (
     <SellerShell
+      activeNav="products"
       description="Manage listings, variants, image references, and stock before moving into cart and order workflows."
       primaryAction={{ href: '/seller/products/new', label: 'Add product' }}
       title="Products"

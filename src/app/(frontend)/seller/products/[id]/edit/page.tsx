@@ -8,7 +8,7 @@ import { getPayload } from 'payload'
 import type { Inventory, ProductImage, ProductVariant } from '@/payload-types'
 import { getMeUser } from '@/utilities/getMeUser'
 import { ProductEditWorkspace } from '../../_components/ProductEditWorkspace'
-import { SellerShell } from '../../_components/SellerShell'
+import { SellerShell } from '../../../_components/SellerShell'
 
 type EditSellerProductPageProps = {
   params: Promise<{
@@ -77,6 +77,7 @@ export default async function EditSellerProductPage({ params }: EditSellerProduc
 
   return (
     <SellerShell
+      activeNav="products"
       description="Update the listing, then manage purchasable variants, product image references, and stock records."
       title={product.productName}
       userLabel={user.fullName || user.email}
