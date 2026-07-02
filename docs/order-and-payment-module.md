@@ -57,14 +57,15 @@ Because there's no cart/checkout UI yet, use the throwaway scripts below to crea
 seller, a buyer, a product with two variants and stock, a shipping address, and a cart.
 **These are not part of the repo** — save each block as a temporary `.ts` file at the
 project root, run it once with `pnpm exec tsx <file>.ts`, then delete the file when
-you're done testing.
+you're done testing. Each script ends with `process.exit(0)` so it terminates on its
+own (Payload's DB pool would otherwise keep the process alive).
 
 **`tmp-seed.ts`** — run once:
 
 ```ts
 import 'dotenv/config'
 import { getPayload } from 'payload'
-import config from './src/payload.config'
+import config from '@payload-config'
 
 const payload = await getPayload({ config })
 
@@ -146,6 +147,7 @@ console.log({
   variantL: variantL.id,
   variantM: variantM.id,
 })
+process.exit(0) // getPayload() keeps a DB pool open, so exit explicitly
 ```
 
 Note the printed `variantM` / `variantL` / `addressID` values — you'll need them next.
@@ -155,7 +157,7 @@ Note the printed `variantM` / `variantL` / `addressID` values — you'll need th
 ```ts
 import 'dotenv/config'
 import { getPayload } from 'payload'
-import config from './src/payload.config'
+import config from '@payload-config'
 
 const payload = await getPayload({ config })
 
@@ -176,6 +178,7 @@ await payload.create({ collection: 'cart-items', data: { cart: cart.id, quantity
 await payload.create({ collection: 'cart-items', data: { cart: cart.id, quantity: 1, variant: 2 } })
 
 console.log(`Added items to cart ${cart.id} for buyer ${buyer.id}`)
+process.exit(0)
 ```
 
 ### 3.3 Test: placing an order (cash on delivery)
@@ -189,7 +192,7 @@ function (`createOrderFromCart`) the server action (`placeOrder` in
 ```ts
 import 'dotenv/config'
 import { getPayload } from 'payload'
-import config from './src/payload.config'
+import config from '@payload-config'
 import { createOrderFromCart } from './src/lib/orders'
 
 const payload = await getPayload({ config })
@@ -211,6 +214,7 @@ const order = await createOrderFromCart(payload, buyer, {
 })
 
 console.log(`Created order ${order.id} — status: ${order.orderStatus}, payment: ${order.paymentStatus}`)
+process.exit(0)
 ```
 
 Run `tmp-add-to-cart.ts` then `tmp-place-order.ts`.
@@ -265,7 +269,7 @@ automated suite instead — see `tests/int/orders.int.spec.ts`:
 ```ts
 import 'dotenv/config'
 import { getPayload } from 'payload'
-import config from './src/payload.config'
+import config from '@payload-config'
 
 const payload = await getPayload({ config })
 
@@ -299,6 +303,7 @@ for (const id of userIDs) {
 }
 
 console.log('Cleanup done.')
+process.exit(0)
 ```
 
 > The `cart-items` and `inventory` deletes above use an empty `where` as a
