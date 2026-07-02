@@ -1,7 +1,14 @@
 'use client'
 
 import { AppShell, Badge, Box, Button, Container, Group, Stack, Text, Title } from '@mantine/core'
-import { LayoutDashboard, LogOut, PackageCheck, ShoppingBag, ShoppingCart } from 'lucide-react'
+import {
+  LayoutDashboard,
+  LogOut,
+  PackageCheck,
+  PackageSearch,
+  ShoppingBag,
+  ShoppingCart,
+} from 'lucide-react'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { useEffect } from 'react'
@@ -64,7 +71,12 @@ export function ShopShell({ children, currentUserLabel, cartItemCount }: ShopShe
                       Sign in
                     </Button>
                   )}
-                  <Button component={Link} href="/cart" leftSection={<ShoppingCart size={18} />} variant="default">
+                  <Button
+                    component={Link}
+                    href="/cart"
+                    leftSection={<ShoppingCart size={18} />}
+                    variant="default"
+                  >
                     Cart {typeof cartItemCount === 'number' ? `(${cartItemCount})` : ''}
                   </Button>
                   <Button
